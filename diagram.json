@@ -4,16 +4,16 @@
   "editor": "wokwi",
   "parts": [
     { "type": "wokwi-arduino-uno", "id": "uno", "top": 0, "left": 0 },
-    { "type": "wokwi-led", "id": "led1", "top": -50, "left": 150 },
-    { "type": "wokwi-led", "id": "led2", "top": -50, "left": 250 },
-    { "type": "wokwi-led", "id": "led3", "top": -50, "left": 200 }
+    { "type": "wokwi-led", "id": "led1", "top": -50, "left": 250 },
+    { "type": "wokwi-led", "id": "led2", "top": -50, "left": 200 },
+    { "type": "wokwi-led", "id": "led3", "top": -50, "left": 150 }
   ],
   "connections": [
-    [ "uno:9", "led1:A", "green", [] ],
+    [ "uno:5", "led1:A", "orange", [] ],
     [ "led1:C", "uno:GND.1", "black", [] ],
-    [ "uno:3", "led2:A", "green", [] ],
+    [ "uno:3", "led2:A", "blue", [] ],
     [ "led2:C", "uno:GND.1", "black", [] ],
-    [ "uno:7", "led3:A", "green", [] ],
+    [ "uno:7", "led3:A", "red", [] ],
     [ "led3:C", "uno:GND.1", "black", [] ]
   ]
 }
