@@ -1,40 +1,26 @@
 #include <Arduino.h>
-#include <avr/io.h>
+#include <Bounce2.h>
 
 constexpr uint8_t LED_PIN = 1;
 constexpr uint8_t BUTTON_PIN = 2;
-constexpr unsigned long DEBOUNCE_MS = 30;
 
-bool rawState = true;
-bool lastRawState = true;
-bool debouncedState = true;
-bool lastDebouncedState = true;
-
-unsigned long lastChangeTime = 0;
+Bounce2::Button button = Bounce2::Button();
+bool ledState = false;
 
 void setup() {
-    DDRB |= (1 << LED_PIN);
-    PORTB &= ~(1 << LED_PIN);
+    pinMode(LED_PIN, OUTPUT);
+    digitalWrite(LED_PIN, LOW);
 
-    DDRD &= ~(1 << BUTTON_PIN);
-    PORTD |= (1 << BUTTON_PIN);
+    button.attach(BUTTON_PIN, INPUT_PULLUP);
+    button.interval(30);              // debounce, мс
+    button.setPressedState(LOW);      // LOW = нажато (т.к. pull-up)
 }
 
 void loop() {
-    rawState = (PIND & (1 << BUTTON_PIN)) != 0;
+    button.update();
 
-    if (rawState != lastRawState) {
-        lastChangeTime = millis();
+    if (button.pressed()) {           // сработает один раз на нажатие
+        ledState = !ledState;
+        digitalWrite(LED_PIN, ledState);
     }
-
-    if ((millis() - lastChangeTime) > DEBOUNCE_MS && rawState != debouncedState) {
-        debouncedState = rawState;
-
-        if (lastDebouncedState && !debouncedState) {
-            PORTB ^= (1 << LED_PIN); // toggle
-        }
-        lastDebouncedState = debouncedState;
-    }
-
-    lastRawState = rawState;
 }
