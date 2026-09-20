@@ -1,17 +1,36 @@
 #include <Arduino.h>
 #include <avr/io.h>
 
-#include <BitUtils.h>
+constexpr uint8_t LED_PIN = 1;
+constexpr uint8_t BUTTON_PIN = 2; 
+
+bool ledState = false;
+// bool lastButtonState = HIGH;
+bool lastButtonState = true;
 
 void setup() {
-    // Pin 3 = PD3 (PORTD) -> выход
-    DDRD |= (1 << DDD3);
-}
+    // pinMode(LED_PIN, OUTPUT);
+    DDRB |= (1 << LED_PIN);
+    PORTB &= ~(1 << LED_PIN);
 
-void loop() {
-    for (int i = 0; i <= 4; i += 2) {
-        uint8_t mask = 1 << i;
-        writeBits(PORTD, 3, 5, mask);
-        delay(500);
-    }
+    // pinMode(BUTTON_PIN, INPUT_PULLUP);
+    DDRD &= ~(1 << BUTTON_PIN);
+    PORTD |= (1 << BUTTON_PIN);
 }
+ 
+void loop() {
+    // const bool buttonState = digitalRead(BUTTON_PIN);
+    const bool buttonState = (PIND & (1 << BUTTON_PIN)) != 0;
+
+    // if(lastButtonState == HIGH && buttonState == LOW){
+    if(lastButtonState && !buttonState){
+        delay(100); // temporary, to avoid button bounce
+        
+        ledState = !ledState;
+        // digitalWrite(LED_PIN, ledState);
+        PORTB ^= (1 << LED_PIN);
+    }
+
+    lastButtonState = buttonState;
+}
+ 

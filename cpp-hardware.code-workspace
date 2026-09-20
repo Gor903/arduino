@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"name": "led-brightness",
+			"path": "."
+		}
+	],
+	"settings": {}
+}
