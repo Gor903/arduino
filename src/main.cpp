@@ -1,41 +1,26 @@
 #include <Arduino.h>
-#include <Bounce2.h>
 
-constexpr uint8_t LED_PIN = 9;
-constexpr uint8_t BUTTON_PIN = 2;
-
-Bounce2::Button button = Bounce2::Button();
-bool ledState = false;
-
-unsigned long pressStartTime = 0;
-bool longPressHandled = false;
-
-constexpr unsigned long LONG_PRESS_TIME = 1000;
+constexpr uint8_t POT_PIN = A0;
+constexpr uint8_t GREEN = 1;
+constexpr uint8_t YELLOW = 2;
+constexpr uint8_t ORANGE = 3;
+constexpr uint8_t RED = 4;
 
 void setup() {
-    pinMode(LED_PIN, OUTPUT);
-    digitalWrite(LED_PIN, LOW);
-
-    button.attach(BUTTON_PIN, INPUT_PULLUP);
-    button.interval(30);              // debounce, мс
-    button.setPressedState(LOW);      // LOW = нажато (т.к. pull-up)
+    pinMode(GREEN, OUTPUT);
+    pinMode(YELLOW, OUTPUT);
+    pinMode(ORANGE, OUTPUT);
+    pinMode(RED, OUTPUT);
 }
 
 void loop() {
-    button.update();
+    int potValue = analogRead(POT_PIN);
+    int percent = (long)potValue * 100 / 1023;
 
-    if(button.pressed()){
-        pressStartTime = millis();
-        longPressHandled = false;
-    }
+    digitalWrite(GREEN, percent > 0);
+    digitalWrite(YELLOW, percent > 25);
+    digitalWrite(ORANGE, percent > 50);
+    digitalWrite(RED, percent > 75);
 
-    if(button.isPressed() && !longPressHandled){
-        if(millis() - pressStartTime >= LONG_PRESS_TIME){
-            longPressHandled = true;
-        }
-    }
-
-    if(button.released()){
-        digitalWrite(LED_PIN, longPressHandled);
-    }
+    delay(10);
 }
