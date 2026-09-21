@@ -2,17 +2,7 @@
 
 constexpr uint8_t POT_PIN = A0;
 
-constexpr uint8_t GREEN = 1;
-constexpr uint8_t YELLOW = 2;
-constexpr uint8_t ORANGE = 3;
-constexpr uint8_t RED = 4;
-
-constexpr uint8_t LEDS[] = {
-    GREEN,
-    YELLOW,
-    ORANGE,
-    RED
-};
+constexpr uint8_t LEDS[] = {1,2,3,4};
 
 void setup() {
     for(size_t i = 0; i < sizeof(LEDS); i++){
