@@ -1,11 +1,16 @@
 #include <Arduino.h>
 #include <Bounce2.h>
 
-constexpr uint8_t LED_PIN = 1;
+constexpr uint8_t LED_PIN = 9;
 constexpr uint8_t BUTTON_PIN = 2;
 
 Bounce2::Button button = Bounce2::Button();
 bool ledState = false;
+
+unsigned long pressStartTime = 0;
+bool longPressHandled = false;
+
+constexpr unsigned long LONG_PRESS_TIME = 1000;
 
 void setup() {
     pinMode(LED_PIN, OUTPUT);
@@ -19,8 +24,18 @@ void setup() {
 void loop() {
     button.update();
 
-    if (button.pressed()) {           // сработает один раз на нажатие
-        ledState = !ledState;
-        digitalWrite(LED_PIN, ledState);
+    if(button.pressed()){
+        pressStartTime = millis();
+        longPressHandled = false;
+    }
+
+    if(button.isPressed() && !longPressHandled){
+        if(millis() - pressStartTime >= LONG_PRESS_TIME){
+            longPressHandled = true;
+        }
+    }
+
+    if(button.released()){
+        digitalWrite(LED_PIN, longPressHandled);
     }
 }
