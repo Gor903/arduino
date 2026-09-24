@@ -3,16 +3,19 @@
 constexpr uint8_t POT_PIN = A0;
 constexpr unsigned long POT_INTERVAL = 10;
 
-constexpr uint8_t LEDS[] = {1, 2, 3, 4};
-constexpr size_t LED_COUNT = sizeof(LEDS) / sizeof(LEDS[0]);
+constexpr uint8_t LED_MASK = 
+    (1 << PD1) |
+    (1 << PD2) |
+    (1 << PD3) |
+    (1 << PD4);
+
 
 unsigned long lastChanged = 0;
 unsigned int potValue = 0;
 
 void setup() {
-    for (size_t i = 0; i < LED_COUNT; i++) {
-        pinMode(LEDS[i], OUTPUT);
-    }
+    DDRD |= LED_MASK;
+    PORTD &= ~LED_MASK;
 }
 
 void loop() {
@@ -25,11 +28,20 @@ void loop() {
 
     unsigned int percent = potValue * 100L / 1023;
 
-    for (size_t i = 0; i < LED_COUNT; i++) {
-        digitalWrite(
-            LEDS[i],
-            percent <= 25 * (i + 1) &&
-            percent > 25 * i
-        );
+    PORTD &= ~LED_MASK;
+    if(percent == 0){
+        // nothing, all leds must be off
+    }
+    else if(percent <= 25){
+        PORTD |= (1 << PD1);
+    }
+    else if(percent <= 50){
+        PORTD |= (1 << PD2);
+    }
+    else if(percent <= 75){
+        PORTD |= (1 << PD3);
+    }
+    else{
+        PORTD |= (1 << PD4);
     }
 }
